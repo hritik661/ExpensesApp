@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background: url('https://media.istockphoto.com/id/2149600154/photo/cost-reduction-business-finance-concept-businessman-with-virtual-screen-of-cost-reduction.webp?a=1&b=1&s=612x612&w=0&k=20&c=XcVjrZizhkQWimEmx3SlPMsgTuA0Q2FxAld02ZFxUIg=') no-repeat center center/cover;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            padding-left: 50px;
+            position: relative;
+        }
+        .app-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: white;
+            position: absolute;
+            top: 30px;
+            left: 50px;
+        }
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 350px;
+        }
+        h2 {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        button {
+            background: #0072ff;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #0056c2;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-title">📊 Expenses App</div> <!-- White text without background -->
+    
+    <div class="container">
+        <h2>📱 Login</h2>
+        <input type="text" id="phoneNumber" placeholder="Enter Mobile Number" maxlength="10">
+        <button onclick="sendOTP()">Send OTP</button>
+
+        <div id="otpSection" class="hidden">
+            <input type="text" id="otpInput" placeholder="Enter OTP" maxlength="6">
+            <button onclick="verifyOTP()">Verify OTP</button>
+        </div>
+    </div>
+
+    <script>
+        let sessionId;
+
+        function sendOTP() {
+            const phone = document.getElementById("phoneNumber").value;
+            if (phone.length !== 10 || isNaN(phone)) {
+                alert("⚠️ Enter a valid 10-digit mobile number.");
+                return;
+            }
+
+            fetch("http://localhost:3000/send-otp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ phone })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("✅ OTP Sent Successfully to " + phone);
+                    document.getElementById("otpSection").classList.remove("hidden");
+                    sessionId = data.sessionId;
+                } else {
+                    alert("❌ Error sending OTP. Try again.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Something went wrong! ❌");
+            });
+        }
+
+        function verifyOTP() {
+            const enteredOTP = document.getElementById("otpInput").value;
+            if (!sessionId) {
+                alert("⚠️ No OTP session found. Please request a new OTP.");
+                return;
+            }
+
+            fetch("http://localhost:3000/verify-otp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ sessionId, otp: enteredOTP })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("🎉 OTP Verified! Redirecting...");
+                    window.location.href = "dashboard.html";  
+                } else {
+                    alert("❌ Invalid OTP. Please try again.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Something went wrong! ❌");
+            });
+        }
+    </script>
+</body>
+</html>

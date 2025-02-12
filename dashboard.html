@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expenses Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('https://as1.ftcdn.net/v2/jpg/12/53/38/48/1000_F_1253384830_j8ZGgiHcZITSI4wabx6KxFgPTpUV9j4g.jpg') no-repeat center center/cover;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding-left: 10%;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+            border-radius: 15px;
+            width: 350px;
+            transform: scale(0.8);
+            opacity: 0;
+            animation: fadeIn 0.8s forwards ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+        .expense-list {
+            margin-top: 15px;
+        }
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f9f9f9;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .expense-item:hover {
+            background: #ececec;
+            transform: scale(1.02);
+        }
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 1px 3px;
+            border-radius: 3px;
+            font-size: 6px;
+            width: 12px;
+            height: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .remove-btn:hover {
+            background: #c82333;
+        }
+        .logout { background: #ff4444; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Expense Tracker</h2>
+        <input type="text" id="expenseName" placeholder="Expense Name">
+        <input type="number" id="expenseAmount" placeholder="Amount">
+        <button onclick="addExpense()">Add Expense</button>
+        <div class="expense-list" id="expenseList"></div>
+        <button class="logout" onclick="logout()">Logout</button>
+    </div>
+
+    <script>
+        function addExpense() {
+            let name = document.getElementById('expenseName').value;
+            let amount = document.getElementById('expenseAmount').value;
+            
+            if (name === '' || amount === '') {
+                alert('Please enter both fields!');
+                return;
+            }
+            
+            let expenseList = document.getElementById('expenseList');
+            let expenseItem = document.createElement('div');
+            expenseItem.classList.add('expense-item');
+            
+            expenseItem.innerHTML = `
+                <span>${name}: ₹${amount}</span>
+                <button class="remove-btn" onclick="removeExpense(this)">x</button>
+            `;
+            
+            expenseList.appendChild(expenseItem);
+            
+            document.getElementById('expenseName').value = '';
+            document.getElementById('expenseAmount').value = '';
+        }
+        
+        function removeExpense(button) {
+            button.parentElement.remove();
+        }
+        
+        function logout() {
+            alert("Logging out...");
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>
